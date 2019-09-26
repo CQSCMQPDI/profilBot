@@ -6,7 +6,7 @@ module.exports = profilConfig = {
 
     try {
 
-      msg.author.send("Décris moi qui tu es, ce que tu aimes dans la vie, bref fais moi une présentation quoi :)\n\n"+
+      msg.author.send("Donne moi donc le lien de ton site web\n\n"+
       "`cancel` pour annuler")
       .then(() => {
         msg.channel.awaitMessages(m => m.author.id === msg.author.id,
@@ -22,19 +22,17 @@ module.exports = profilConfig = {
             else if(res.content.match(/^https\:\/\//g))
             {
                 const str = res.content;
-                let sql = "INSERT INTO profils(pseudo, website) VALUES('<@"+msg.author.id+">', '"+str.toString()+"');";
 
                 pool.getConnection(function(err,connection){
                   if (err) {
                     console.error(err);
                     return;
                   }
-                  connection.query(sql,function(err,rows){
+                  connection.query("INSERT INTO profils(pseudo, website) VALUES(?, ?);", ["<@"+msg.author.id+">", str],function(err,rows){
                     connection.release();
                     if(err.errno===1062)
                     {
-                      sql = "UPDATE profils SET website = '"+str.toString()+"' WHERE pseudo = '<@"+msg.author.id+">'";
-                      connection.query(sql,function(err,rows){
+                      connection.query("UPDATE profils SET website= ? WHERE pseudo = ?", [str, "<@"+msg.author.id+">"],function(err,rows){
                         if(err) console.log(err);
                         else if(!err)
                         {
@@ -70,7 +68,7 @@ module.exports = profilConfig = {
   banner: function(msg, pool){
     try {
 
-      msg.author.send("Décris moi qui tu es, ce que tu aimes dans la vie, bref fais moi une présentation quoi :)\n\n"+
+      msg.author.send("Ok, domme moi le lien de l'image que tu veux ajouter\n\n"+
       "`cancel` pour annuler")
       .then(() => {
         msg.channel.awaitMessages(m => m.author.id === msg.author.id,
@@ -86,19 +84,17 @@ module.exports = profilConfig = {
             else if(res.content.match(/^https\:\/\/*/g))
             {
                 const str = res.content;
-                let sql = "INSERT INTO profils(pseudo, banner) VALUES('<@"+msg.author.id+">', '"+str.toString()+"');";
 
                 pool.getConnection(function(err,connection){
                   if (err) {
                     console.error(err);
                     return;
                   }
-                  connection.query(sql,function(err,rows){
+                  connection.query("INSERT INTO profils(pseudo, banner) VALUES(?, ?);", ["<@"+msg.author.id+">", str],function(err,rows){
                     connection.release();
                     if(err.errno===1062)
                     {
-                      sql = "UPDATE profils SET banner = '"+str.toString()+"' WHERE pseudo = '<@"+msg.author.id+">'";
-                      connection.query(sql,function(err,rows){
+                      connection.query("UPDATE profils SET banner= ? WHERE pseudo = ?", [str, "<@"+msg.author.id+">"],function(err,rows){
                         if(err) console.log(err);
                         else if(!err)
                         {
@@ -135,7 +131,7 @@ module.exports = profilConfig = {
 
     try {
 
-      msg.author.send("Décris moi qui tu es, ce que tu aimes dans la vie, bref fais moi une présentation quoi :)\n\n"+
+      msg.author.send("Et bien, passe moi le lien de l'avatar que tu voudrais ajouter\n\n"+
       "`cancel` pour annuler")
       .then(() => {
         msg.channel.awaitMessages(m => m.author.id === msg.author.id,
@@ -148,22 +144,20 @@ module.exports = profilConfig = {
             res = res.first();
 
             if(res.content === "cancel"){ msg.author.send("Très bien, j'arrête tout"); return;}
-            else if(!res.content.match(/^https\:\/\/*/g))
+            else if(res.content.match(/^https\:\/\//g))
             {
                 const str = res.content;
-                let sql = "INSERT INTO profils(pseudo, picture) VALUES('<@"+msg.author.id+">', '"+str.toString()+"');";
 
                 pool.getConnection(function(err,connection){
                   if (err) {
                     console.error(err);
                     return;
                   }
-                  connection.query(sql,function(err,rows){
+                  connection.query("INSERT INTO profils(pseudo, picture) VALUES(?, ?);", ["<@"+msg.author.id+">", str],function(err,rows){
                     connection.release();
                     if(err.errno===1062)
                     {
-                      sql = "UPDATE profils SET picture = '"+str.toString()+"' WHERE pseudo = '<@"+msg.author.id+">'";
-                      connection.query(sql,function(err,rows){
+                      connection.query("UPDATE profils SET picture= ? WHERE pseudo = ?", [str, "<@"+msg.author.id+">"],function(err,rows){
                         if(err) console.log(err);
                         else if(!err)
                         {
@@ -199,7 +193,7 @@ module.exports = profilConfig = {
 
     try {
 
-      msg.author.send("Décris moi qui tu es, ce que tu aimes dans la vie, bref fais moi une présentation quoi :)\n\n"+
+      msg.author.send("D'accord, dit moi donc les langages qui te plaisent.. :thinking:\n\n"+
       "`cancel` pour annuler")
       .then(() => {
         msg.channel.awaitMessages(m => m.author.id === msg.author.id,
@@ -215,19 +209,17 @@ module.exports = profilConfig = {
             else
             {
                 const str = res.content;
-                let sql = "INSERT INTO profils(pseudo, langage) VALUES('<@"+msg.author.id+">', '"+str.toString()+"');";
 
                 pool.getConnection(function(err,connection){
                   if (err) {
                     console.error(err);
                     return;
                   }
-                  connection.query(sql,function(err,rows){
+                  connection.query("INSERT INTO profils(pseudo, langage) VALUES(?, ?);", ["<@"+msg.author.id+">", str],function(err,rows){
                     connection.release();
                     if(err.errno===1062)
                     {
-                      sql = "UPDATE profils SET langage = '"+str.toString()+"' WHERE pseudo = '<@"+msg.author.id+">'";
-                      connection.query(sql,function(err,rows){
+                      connection.query("UPDATE profils SET langage= ? WHERE pseudo = ?", [str, "<@"+msg.author.id+">"],function(err,rows){
                         if(err) console.log(err);
                         else if(!err)
                         {
@@ -275,19 +267,17 @@ module.exports = profilConfig = {
             else
             {
                 const str = res.content;
-                let sql = "INSERT INTO profils(pseudo, presentation) VALUES('<@"+msg.author.id+">', '"+str.toString()+"');";
 
                 pool.getConnection(function(err,connection){
                   if (err) {
                     console.error(err);
                     return;
                   }
-                  connection.query(sql,function(err,rows){
+                  connection.query("INSERT INTO profils(pseudo, presentation) VALUES(?, ?);", ["<@"+msg.author.id+">", str],function(err,rows){
                     connection.release();
                     if(err.errno===1062)
                     {
-                      sql = "UPDATE profils SET presentation = '"+str.toString()+"' WHERE pseudo = '<@"+msg.author.id+">'";
-                      connection.query(sql,function(err,rows){
+                      connection.query("UPDATE profils SET presentation= ? WHERE pseudo = ?", [str, "<@"+msg.author.id+">"],function(err,rows){
                         if(err) console.log(err);
                         else if(!err)
                         {

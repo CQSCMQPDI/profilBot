@@ -20,15 +20,13 @@ function showProfil(pseudo, msg)
     if(msg.guild === undefined || msg.guild === null) return;
 
 
-    let sql = "SELECT * FROM profils WHERE pseudo='"+pseudo.toString()+"'";
-
     pool.getConnection(function(err,connection){
       if (err) {
         console.error(err);
         return;
       }
 
-      connection.query(sql,function(err,rows){
+      connection.query("SELECT * FROM profils WHERE pseudo=?", [pseudo],function(err,rows){
         connection.release();
         if(!err) {
 
@@ -36,6 +34,10 @@ function showProfil(pseudo, msg)
 
             let usernamefound ="";
             let pictureFound = "";
+
+
+            if(rslt[0] === undefined){ msg.channel.send("Le profil demandé n'existe pas"); return;}
+            else if(rslt[0].picture === undefined || rslt[0].banner === undefined){ msg.channel.send("Le profil demandé est incomplet"); return;}
 
 
             msg.guild.members.filter((member) => {
@@ -88,8 +90,8 @@ function setProfil(msg)
 {
   try {
 
-    msg.author.send("Bonjour, Cette configuration se fera en entretient, alors, dit moi, que veux-tu modifier ?"+
-    "\n\n`Présentation`\n`langages`\n`avatar`\n`bannière`\n`site`\n\n"+
+    msg.author.send("Bonjour, Cette configuration se fera en entretien, alors, dis moi, que veux-tu modifier ?"+
+    "\n\n`Présentation`\n`Langages`\n`Avatar`\n`Bannière`\n`Site`\n\n"+
     "`cancel` pour annuler")
     .then(() => {
       msg.channel.awaitMessages(m => m.author.id === msg.author.id, {
