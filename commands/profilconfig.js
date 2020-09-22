@@ -18,7 +18,7 @@ module.exports = profilConfig = {
         .then(res => {
             res = res.first();
 
-            if(res.content === "cancel"){ msg.author.send("Très bien, j'arrête tout"); return;}
+            if(res.content === "cancel"){ misc.sendMessagesCode(msg, "stopAll"); return;}
             else if(res.content.match(/^https\:\/\//g))
             {
                 const str = res.content;
@@ -41,7 +41,7 @@ module.exports = profilConfig = {
                         }
                       });
                     }
-                    else if(err.errno===1406){msg.author.send("Ton lien est trop grand, je ne peux travailler dans de telles conditions ! è_é");}
+                    else if(err.errno===1406){misc.sendMessagesCode(msg, "errorMessage");}
                     else if(err) console.log(err);
                     else if(!err)
                     {
@@ -55,7 +55,7 @@ module.exports = profilConfig = {
               return;
             }
             else {
-              msg.author.send("Ce que tu m'as envoyé n'a pas l'air d'être un lien conventionnel");
+              misc.sendMessagesCode(msg, "urlCannoBeParsed");
             }
         }).catch((_) => {});
       })
@@ -80,7 +80,7 @@ module.exports = profilConfig = {
         .then(res => {
             res = res.first();
 
-            if(res.content === "cancel"){ msg.author.send("Très bien, j'arrête tout"); return;}
+            if(res.content === "cancel"){ misc.sendMessagesCode(msg, "stopAll"); return;}
             else if(res.content.match(/^https\:\/\/*/g))
             {
                 const str = res.content;
@@ -103,7 +103,7 @@ module.exports = profilConfig = {
                         }
                       });
                     }
-                    else if(err.errno===1406){msg.author.send("Ton lien est trop grand, je ne peux travailler dans de telles conditions ! è_é");}
+                    else if(err.errno===1406){misc.sendMessagesCode(msg, "errorMessage");}
                     else if(err) console.log(err);
                     else if(!err)
                     {
@@ -117,7 +117,7 @@ module.exports = profilConfig = {
               return;
             }
             else {
-              msg.author.send("Ce que tu m'as envoyé n'a pas l'air d'être un lien conventionnel");
+              misc.sendMessagesCode(msg, "urlCannoBeParsed");
             }
         }).catch((_) => {});
       })
@@ -143,7 +143,7 @@ module.exports = profilConfig = {
         .then(res => {
             res = res.first();
 
-            if(res.content === "cancel"){ msg.author.send("Très bien, j'arrête tout"); return;}
+            if(res.content === "cancel"){ misc.sendMessagesCode(msg, "stopAll"); return;}
             else if(res.content.match(/^https\:\/\//g))
             {
                 const str = res.content;
@@ -166,7 +166,7 @@ module.exports = profilConfig = {
                         }
                       });
                     }
-                    else if(err.errno===1406){msg.author.send("Ton lien est trop grand, je ne peux travailler dans de telles conditions ! è_é");}
+                    else if(err.errno===1406){misc.sendMessagesCode(msg, "errorMessage");}
                     else if(err) console.log(err);
                     else if(!err)
                     {
@@ -180,7 +180,7 @@ module.exports = profilConfig = {
               return;
             }
             else {
-              msg.author.send("Ce que tu m'as envoyé n'a pas l'air d'être un lien conventionnel");
+              misc.sendMessagesCode(msg, "urlCannoBeParsed");
             }
         }).catch((_) => {});
       })
@@ -205,7 +205,7 @@ module.exports = profilConfig = {
         .then(res => {
             res = res.first();
 
-            if(res.content === "cancel"){ msg.author.send("Très bien, j'arrête tout"); return;}
+            if(res.content === "cancel"){ misc.sendMessagesCode(msg, "stopAll"); return;}
             else
             {
                 const str = res.content;
@@ -228,7 +228,7 @@ module.exports = profilConfig = {
                         }
                       });
                     }
-                    else if(err.errno===1406){msg.author.send("désolé, ton message est trop long, il va falloire le raccourcir.. à plus.");}
+                    else if(err.errno===1406){misc.sendMessagesCode(msg, "tooLong");}
                     else if(err) console.log(err);
                     else if(!err)
                     {
@@ -263,7 +263,7 @@ module.exports = profilConfig = {
         .then(res => {
             res = res.first();
 
-            if(res.content === "cancel"){ msg.author.send("Très bien, j'arrête tout"); return;}
+            if(res.content === "cancel"){ misc.sendMessagesCode(msg, "stopAll"); return;}
             else
             {
                 const str = res.content;
@@ -286,7 +286,7 @@ module.exports = profilConfig = {
                         }
                       });
                     }
-                    else if(err.errno===1406){msg.author.send("désolé, ton message est trop long, il va falloire le raccourcir.. à plus.");}
+                    else if(err.errno===1406){misc.sendMessagesCode(msg, "tooLong");}
                     else if(err) console.log(err);
                     else if(!err)
                     {
