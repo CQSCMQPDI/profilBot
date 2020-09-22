@@ -1,2 +1,2 @@
-# profilBot
-un simple bot avec gestion de profils pour discord
+## profilBot
+Un simple bot avec gestion de profils pour discord

@@ -56,7 +56,7 @@ function showProfil(pseudo, msg)
             embed.addField("Langages:", rslt[0].langage);
             embed.addField("Mon site web:", rslt[0].website);
             embed.setImage(rslt[0].banner);
-            embed.setFooter("Requête demandée par " + msg.author.username+"#"+msg.author.discriminator, msg.author.avatarURL);
+            embed.setFooter(`Requête demandée par ${msg.author.username} #${msg.author.discriminator}`, msg.author.avatarURL);
 
             msg.channel.send(embed);
 
@@ -90,9 +90,14 @@ function setProfil(msg)
 {
   try {
 
-    msg.author.send("Bonjour, Cette configuration se fera en entretien, alors, dis moi, que veux-tu modifier ?"+
-    "\n\n`Présentation`\n`Langages`\n`Avatar`\n`Bannière`\n`Site`\n\n"+
-    "`cancel` pour annuler")
+    msg.author.send(`Bonjour, Cette configuration se fera en entretien, alors, dis moi, que veux-tu modifier ?\n\n
+    \`Présentation\`\n
+    \`Langages\`\n
+    \`Bannière\`\n
+    \`Avatar\`\n
+    \`Site\`\n
+    \n
+    \`cancel\` pour annuler`)
     .then(() => {
       msg.channel.awaitMessages(m => m.author.id === msg.author.id, {
           max: 1,

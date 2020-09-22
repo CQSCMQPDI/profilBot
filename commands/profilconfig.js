@@ -28,11 +28,11 @@ module.exports = profilConfig = {
                     console.error(err);
                     return;
                   }
-                  connection.query("INSERT INTO profils(pseudo, website) VALUES(?, ?);", ["<@"+msg.author.id+">", str],function(err,rows){
+                  connection.query("INSERT INTO profils(pseudo, website) VALUES(?, ?);", [`<@${msg.author.id}>`, str],function(err,rows){
                     connection.release();
                     if(err.errno===1062)
                     {
-                      connection.query("UPDATE profils SET website= ? WHERE pseudo = ?", [str, "<@"+msg.author.id+">"],function(err,rows){
+                      connection.query("UPDATE profils SET website= ? WHERE pseudo = ?", [str, `<@${msg.author.id}>`],function(err,rows){
                         if(err) console.log(err);
                         else if(!err)
                         {
@@ -90,11 +90,11 @@ module.exports = profilConfig = {
                     console.error(err);
                     return;
                   }
-                  connection.query("INSERT INTO profils(pseudo, banner) VALUES(?, ?);", ["<@"+msg.author.id+">", str],function(err,rows){
+                  connection.query("INSERT INTO profils(pseudo, banner) VALUES(?, ?);", [`<@${msg.author.id}>`, str],function(err,rows){
                     connection.release();
                     if(err.errno===1062)
                     {
-                      connection.query("UPDATE profils SET banner= ? WHERE pseudo = ?", [str, "<@"+msg.author.id+">"],function(err,rows){
+                      connection.query("UPDATE profils SET banner= ? WHERE pseudo = ?", [str, `<@${msg.author.id}>`],function(err,rows){
                         if(err) console.log(err);
                         else if(!err)
                         {
@@ -153,11 +153,11 @@ module.exports = profilConfig = {
                     console.error(err);
                     return;
                   }
-                  connection.query("INSERT INTO profils(pseudo, picture) VALUES(?, ?);", ["<@"+msg.author.id+">", str],function(err,rows){
+                  connection.query("INSERT INTO profils(pseudo, picture) VALUES(?, ?);", [`<@${msg.author.id}>`, str],function(err,rows){
                     connection.release();
                     if(err.errno===1062)
                     {
-                      connection.query("UPDATE profils SET picture= ? WHERE pseudo = ?", [str, "<@"+msg.author.id+">"],function(err,rows){
+                      connection.query("UPDATE profils SET picture= ? WHERE pseudo = ?", [str, `<@${msg.author.id}>`],function(err,rows){
                         if(err) console.log(err);
                         else if(!err)
                         {
@@ -215,11 +215,11 @@ module.exports = profilConfig = {
                     console.error(err);
                     return;
                   }
-                  connection.query("INSERT INTO profils(pseudo, langage) VALUES(?, ?);", ["<@"+msg.author.id+">", str],function(err,rows){
+                  connection.query("INSERT INTO profils(pseudo, langage) VALUES(?, ?);", [`<@${msg.author.id}>`, str],function(err,rows){
                     connection.release();
                     if(err.errno===1062)
                     {
-                      connection.query("UPDATE profils SET langage= ? WHERE pseudo = ?", [str, "<@"+msg.author.id+">"],function(err,rows){
+                      connection.query("UPDATE profils SET langage= ? WHERE pseudo = ?", [str, `<@${msg.author.id}>`],function(err,rows){
                         if(err) console.log(err);
                         else if(!err)
                         {
@@ -273,11 +273,11 @@ module.exports = profilConfig = {
                     console.error(err);
                     return;
                   }
-                  connection.query("INSERT INTO profils(pseudo, presentation) VALUES(?, ?);", ["<@"+msg.author.id+">", str],function(err,rows){
+                  connection.query("INSERT INTO profils(pseudo, presentation) VALUES(?, ?);", [`<@${msg.author.id}>`, str],function(err,rows){
                     connection.release();
                     if(err.errno===1062)
                     {
-                      connection.query("UPDATE profils SET presentation= ? WHERE pseudo = ?", [str, "<@"+msg.author.id+">"],function(err,rows){
+                      connection.query("UPDATE profils SET presentation= ? WHERE pseudo = ?", [str, `<@${msg.author.id}>`],function(err,rows){
                         if(err) console.log(err);
                         else if(!err)
                         {
