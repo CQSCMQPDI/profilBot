@@ -117,8 +117,8 @@ function setProfil(msg)
 
             console.log(res.content);
 
-            if(res.content === "cancel" || res.content === "c"){ msg.author.send(
-              sententes.stopAll); 
+            if(res.content === "cancel" || res.content === "c"){ 
+              msg.author.send(sententes.stopAll); 
               return;
             }
             else if(res.author.id === msg.author.id){
@@ -166,11 +166,11 @@ function setProfil(msg)
 
 
 
-module.exports = function(argv, msg) {
+module.exports = (argv, msg) => {
 
     let arg = argv.split(" ");
 
-    if(arg[1] === "show" && arg[2] !== undefined && arg[2] !== null) showProfil(arg[2], msg);
+    if(arg[1] === "show" && arg[2] != undefined) showProfil(arg[2], msg);
     else if(arg[1] === "set") setProfil(msg);
     else msg.reply(sententes.errorMessage)
 };
