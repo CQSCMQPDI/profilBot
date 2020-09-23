@@ -1,10 +1,7 @@
 const misc = require('./misc.js');
 
+
 module.exports = profilConfig = {
-
-
-
-
 
 
 

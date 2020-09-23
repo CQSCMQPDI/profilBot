@@ -1,9 +1,11 @@
 const mysql = require('mysql');
 const { RichEmbed } = require('discord.js');
 
-const profilConfig = require('./profilconfig.js');
-const mysqlConfig = JSON.parse(require("../config/mysql_config.json"));
-const sententes = JSON.parse(require("../config/sentences.json"));
+let showProfil = require('./profilCommands/showProfil.js');
+let setProfil = require('./profilCommands/setProfil.js');
+
+const mysqlConfig = require("../config/mysql_config.json");
+const sententes = require("../config/sentences.json");
 
 var pool = mysql.createPool({
   connectionLimit: mysqlConfig.connectionLimit,
@@ -15,162 +17,12 @@ var pool = mysql.createPool({
 });
 
 
-function showProfil(pseudo, msg)
-{
-
-  try {
-    if(msg.guild == undefined) return;
-
-
-    pool.getConnection((err,connection) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-
-      connection.query("SELECT * FROM profils WHERE pseudo=?", [pseudo], (err,rows) => {
-        connection.release();
-        if(!err) {
-
-            const rslt = rows;
-
-            let usernamefound ="";
-            let pictureFound = "";
-
-
-            if(rslt[0] === undefined){ 
-              msg.channel.send("Le profil demandé n'existe pas");
-              return;
-            }
-            else if(rslt[0].picture === undefined || rslt[0].banner === undefined){
-              msg.channel.send("Le profil demandé est incomplet"); 
-              return;
-            }
-
-
-            msg.guild.members.filter((member) => {
-                if(member.user.id === pseudo.replace(/\<|\>|@/g, ""))
-                {
-                  usernamefound = `${member.user.username}#${member.user.discriminator}`;
-                  pictureFound = member.user.avatarURL;
-                }
-            });
-
-            const embed = new RichEmbed();
-            embed.setTitle("Profil");
-            embed.setAuthor(usernamefound, pictureFound);
-            embed.setThumbnail(rslt[0].picture);
-            embed.addField("Présentation:", rslt[0].presentation);
-            embed.addField("Langages:", rslt[0].langage);
-            embed.addField("Mon site web:", rslt[0].website);
-            embed.setImage(rslt[0].banner);
-            embed.setFooter(`Requête demandée par ${msg.author.username} #${msg.author.discriminator}`, msg.author.avatarURL);
-
-            msg.channel.send(embed);
-
-
-        }
-        else {
-          console.error(err)
-        }
-      });
-
-      connection.on('error', (err) => {
-        console.error(err);
-        return;
-      });
-    });
-
-
-
-
-
-
-  } catch (e) {
-    console.log(e);
-  }
-
-
-}
-
-
-function setProfil(msg)
-{
-  try {
-
-    msg.author.send(`Bonjour, Cette configuration se fera en entretien, alors, dis moi, que veux-tu modifier ?\n\n
-    \`Présentation\`\n
-    \`Langages\`\n
-    \`Bannière\`\n
-    \`Avatar\`\n
-    \`Site\`\n
-    \n
-    \`cancel\` pour annuler`)
-    .then(() => {
-      msg.channel.awaitMessages(m => m.author.id === msg.author.id, {
-          max: 1,
-          time: 30000,
-          errors: ['time']
-      })
-      .then(res => {
-            res = res.first();
-
-            console.log(res.content);
-
-            if(res.content === "cancel" || res.content === "c"){ 
-              msg.author.send(sententes.stopAll); 
-              return;
-            }
-            else if(res.author.id === msg.author.id){
-
-              switch(res.content.toLowerCase())
-              {
-                case "présentation" || "present":
-                  profilConfig.presentation(msg, pool);
-                  return;
-                case "langages" || "lang":
-                  profilConfig.langage(msg, pool);
-                  return;
-                case "avatar":
-                  profilConfig.avatar(msg, pool);
-                  return;
-                case "bannière" || "banner":
-                  profilConfig.banner(msg, pool); 
-                  return;
-                case "site":
-                  profilConfig.website(msg, pool);
-                  return;
-                default:
-                  msg.author.send("Tu n'as pas envoyé le bon mot clef, je me casse, ciao.");
-                  return;
-              }
-
-            }
-
-            else return;
-
-      }).catch((_) => {});
-
-    });
-
-  } catch (e) {
-    console.log(e);
-  }
-
-
-}
-
-
-
-
-
-
 
 module.exports = (argv, msg) => {
 
     let arg = argv.split(" ");
-
-    if(arg[1] === "show" && arg[2] != undefined) showProfil(arg[2], msg);
-    else if(arg[1] === "set") setProfil(msg);
+    console.log(arg);
+    if(arg[0] === "show" && arg[1] != undefined) showProfil(arg[1], msg, pool);
+    else if(arg[0] === "set") setProfil(msg, pool);
     else msg.reply(sententes.errorMessage)
 };

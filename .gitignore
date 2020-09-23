@@ -1,0 +1,4 @@
+node_modules/
+package-lock.json
+config/bot_config.json
+config/mysql_config.json
