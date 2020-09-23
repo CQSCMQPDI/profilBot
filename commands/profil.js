@@ -1,15 +1,17 @@
 const mysql = require('mysql');
-const { Client, RichEmbed } = require('discord.js');
+const { RichEmbed } = require('discord.js');
 
 const profilConfig = require('./profilconfig.js');
+const mysqlConfig = require("../config/mysql_config.json");
+const sententes = require("../config/sentences.json");
 
 var pool = mysql.createPool({
-  connectionLimit: 100,
-  host: "localhost",
-  user: "",
-  password: "",
-  database: "profilBot",
-  debug: false
+  connectionLimit: mysqlConfig.connectionLimit,
+  host: mysqlConfig.host,
+  user: mysqlConfig.user,
+  password: mysqlConfig.password,
+  database: mysqlConfig.database,
+  debug: mysqlConfig.debug
 });
 
 
@@ -17,16 +19,16 @@ function showProfil(pseudo, msg)
 {
 
   try {
-    if(msg.guild === undefined || msg.guild === null) return;
+    if(msg.guild == undefined) return;
 
 
-    pool.getConnection(function(err,connection){
+    pool.getConnection((err,connection) => {
       if (err) {
         console.error(err);
         return;
       }
 
-      connection.query("SELECT * FROM profils WHERE pseudo=?", [pseudo],function(err,rows){
+      connection.query("SELECT * FROM profils WHERE pseudo=?", [pseudo], (err,rows) => {
         connection.release();
         if(!err) {
 
@@ -36,14 +38,20 @@ function showProfil(pseudo, msg)
             let pictureFound = "";
 
 
-            if(rslt[0] === undefined){ msg.channel.send("Le profil demandé n'existe pas"); return;}
-            else if(rslt[0].picture === undefined || rslt[0].banner === undefined){ msg.channel.send("Le profil demandé est incomplet"); return;}
+            if(rslt[0] === undefined){ 
+              msg.channel.send("Le profil demandé n'existe pas");
+              return;
+            }
+            else if(rslt[0].picture === undefined || rslt[0].banner === undefined){
+              msg.channel.send("Le profil demandé est incomplet"); 
+              return;
+            }
 
 
             msg.guild.members.filter((member) => {
                 if(member.user.id === pseudo.replace(/\<|\>|@/g, ""))
                 {
-                  usernamefound = member.user.username + "#" + member.user.discriminator;
+                  usernamefound = `${member.user.username}#${member.user.discriminator}`;
                   pictureFound = member.user.avatarURL;
                 }
             });
@@ -67,7 +75,7 @@ function showProfil(pseudo, msg)
         }
       });
 
-      connection.on('error', function(err) {
+      connection.on('error', (err) => {
         console.error(err);
         return;
       });
@@ -108,19 +116,38 @@ function setProfil(msg)
             res = res.first();
 
             console.log(res.content);
-            if(res.content === "cancel"){ msg.author.send("Très bien, j'arrête tout"); return;}
-            else if(res.author.id === msg.author.id){
 
-              if(res.content.toLowerCase() === "présentation"){ profilConfig.presentation(msg, pool); return;}
-              else if(res.content.toLowerCase() === "langages"){ profilConfig.langage(msg, pool); return;}
-              else if(res.content.toLowerCase() === "avatar"){ profilConfig.avatar(msg, pool); return;}
-              else if(res.content.toLowerCase() === "bannière"){ profilConfig.banner(msg, pool); return;}
-              else if(res.content.toLowerCase() === "site"){ profilConfig.website(msg, pool); return;}
-              else msg.author.send("Tu n'as pas envoyé le bon mot clef, je me casse, ciao."); return;
-            }
-            else {
+            if(res.content === "cancel" || res.content === "c"){ msg.author.send(
+              sententes.stopAll); 
               return;
             }
+            else if(res.author.id === msg.author.id){
+
+              switch(res.content.toLowerCase())
+              {
+                case "présentation" || "present":
+                  profilConfig.presentation(msg, pool);
+                  return;
+                case "langages" || "lang":
+                  profilConfig.langage(msg, pool);
+                  return;
+                case "avatar":
+                  profilConfig.avatar(msg, pool);
+                  return;
+                case "bannière" || "banner":
+                  profilConfig.banner(msg, pool); 
+                  return;
+                case "site":
+                  profilConfig.website(msg, pool);
+                  return;
+                default:
+                  msg.author.send("Tu n'as pas envoyé le bon mot clef, je me casse, ciao.");
+                  return;
+              }
+
+            }
+
+            else return;
 
       }).catch((_) => {});
 
@@ -131,18 +158,12 @@ function setProfil(msg)
   }
 
 
-
-
-
-
-
-
-
-
-
-
-
 }
+
+
+
+
+
 
 
 module.exports = function(argv, msg) {
@@ -151,5 +172,5 @@ module.exports = function(argv, msg) {
 
     if(arg[1] === "show" && arg[2] !== undefined && arg[2] !== null) showProfil(arg[2], msg);
     else if(arg[1] === "set") setProfil(msg);
-    else msg.reply("Il manque des informations, je ne peux pas travailler dans de telles conditions !")
+    else msg.reply(sententes.errorMessage)
 };
