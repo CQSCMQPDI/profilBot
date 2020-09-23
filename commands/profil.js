@@ -2,8 +2,8 @@ const mysql = require('mysql');
 const { RichEmbed } = require('discord.js');
 
 const profilConfig = require('./profilconfig.js');
-const mysqlConfig = require("../config/mysql_config.json");
-const sententes = require("../config/sentences.json");
+const mysqlConfig = JSON.parse(require("../config/mysql_config.json"));
+const sententes = JSON.parse(require("../config/sentences.json"));
 
 var pool = mysql.createPool({
   connectionLimit: mysqlConfig.connectionLimit,
