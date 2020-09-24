@@ -1,69 +1,64 @@
-let profilConfig = require("../profilconfig.js");
+const bot_config = require('../../config/bot_config.json');
 
-module.exports = (msg, pool) => {
+const introduction = require("./profilconfig/introduction.js");
+const avatar = require("./profilconfig/avatar.js");
+const banner = require("./profilconfig/banner.js");
+const languages = require("./profilconfig/languages.js");
+const website = require("./profilconfig/website.js");
+
+module.exports = (dmMsg, pool) => {
     
     
     try {
 
-        msg.author.send(`Bonjour, Cette configuration se fera en entretien, alors, dis moi, que veux-tu modifier ?\n\n
+        dmMsg.author.send(`Bonjour, Cette configuration se fera en entretien, alors, dis moi, que veux-tu modifier ?\n\n
     \`Présentation\`\n
     \`Langages\`\n
     \`Bannière\`\n
     \`Avatar\`\n
     \`Site\`\n
     \n
-    \`cancel\` pour annuler`)
-            .then(() => {
-                msg.channel.awaitMessages(m => m.author.id === msg.author.id, {
+    \`cancel\` pour annuler`).then(dmdmMsg => {
+
+
+                dmdmMsg.channel.awaitMessages(m => m.author.id === dmMsg.author.id, {
                     max: 1,
-                    time: 30000,
+                    time: bot_config.awaitMessages,
                     errors: ['time']
                 }).then(res => {
 
-                        res = res.first();
+                    res = res.first();
+                        
 
-                        console.log(res.content);
-
-                        if (res.content === "cancel" || res.content === "c") {
-                            msg.author.send(sententes.stopAll);
-                            return;
-                        }
-                        else if (res.author.id === msg.author.id) {
-
-                            switch (res.content.toLowerCase()) {
-                                case "pr":
-                                    profilConfig.presentation(msg, pool);
-                                    return;
-                                case "lang":
-                                    profilConfig.langage(msg, pool);
-                                    return;
-                                case "avatar":
-                                    profilConfig.avatar(msg, pool);
-                                    return;
-                                case "banner":
-                                    profilConfig.banner(msg, pool);
-                                    return;
-                                case "site":
-                                    profilConfig.website(msg, pool);
-                                    return;
-                                default:
-                                    msg.author.send("Tu n'as pas envoyé le bon mot clef, je me casse, ciao.");
-                                    return;
-                            }
-
+                        switch (res.content.toLowerCase()) {
+                            case "pr":
+                                introduction(dmMsg, pool);
+                                return;
+                            case "lang":
+                                languages(dmMsg, pool);
+                                return;
+                            case "avatar":
+                                avatar(dmMsg, pool);
+                                return;
+                            case "banner":
+                                banner(dmMsg, pool);
+                                return;
+                            case "site":
+                                website(dmMsg, pool);
+                                return;
+                            case "cancel":
+                                dmMsg.author.send(sententes.stopAll);
+                                return;
+                            default:
+                                dmMsg.author.send("Tu n'as pas envoyé le bon mot clef, je me casse, ciao.");
+                                return;
                         }
 
-                        else return;
+                    });
+                });
 
-                    }).catch((_) => { });
-
-            });
-
-    } catch (e) {
-        console.log(e);
+    }catch(err){
+        throw err;
     }
 
-
 }
-
-

@@ -1,9 +1,7 @@
 ## profilBot
 Un simple bot avec gestion de profils pour discord
 
-/!\ Le code mysql doit être mit à jour /!\
--> commands/profil.js
--> commands/profilconfig.js
+/!\ Totalement buggé
 
 #### Configuration Mysql:
 

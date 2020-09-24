@@ -2,6 +2,6 @@
   "name": "profilbot",
   "dependencies": {
     "discord.js": "^11.5.1",
-    "mysql": "^2.17.1"
+    "mysql2": "^2.2.5"
   }
 }
