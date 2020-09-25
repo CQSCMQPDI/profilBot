@@ -3,6 +3,5 @@
   "host": "localhost",
   "user": "",
   "password": "",
-  "database": "profilBot",
-  "debug": false
+  "database": "profilBot"
 }

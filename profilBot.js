@@ -24,7 +24,7 @@ client.on('message', msg => {
     msg.reply('Pong!');
   }
 
-  else if(msg.content.toLowerCase().indexOf(prefix) > -1 && msg.content.toLowerCase().includes("profil")){
+  else if(msg.content.toLowerCase().indexOf(prefix) > -1 && msg.content.toLowerCase().split(" ")[1] != null){
     profilcommand(msg.content.replace(prefix, ""), msg);
   }
 

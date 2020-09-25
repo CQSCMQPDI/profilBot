@@ -1,17 +1,11 @@
+const { RichEmbed } = require('discord.js');
+
+
 module.exports = (pseudo, msg, pool) => {
 
-    try {
-        if (msg.guild == undefined) return;
-
-
-        pool.getConnection((err, connection) => {
-            if (err) {
-                console.error(err);
-                return;
-            }
-
-            connection.query("SELECT * FROM profils WHERE pseudo=?", [pseudo], (err, rows) => {
-                connection.release();
+        if (msg.guild == undefined) throw `msg.guild undefined for ${msg.author.tag}`;
+            
+            pool.query("SELECT * FROM profils WHERE pseudo=?", [pseudo], (err, rows) => {
                 if (!err) {
 
                     const rslt = rows;
@@ -19,20 +13,21 @@ module.exports = (pseudo, msg, pool) => {
                     let usernamefound = "";
                     let pictureFound = "";
 
-
-                    if (rslt[0] === undefined) {
+                    if (rslt[0] == null) {
                         msg.channel.send("Le profil demandé n'existe pas");
+                        console.error(`Profil n'existe pas, demandé par ${msg.author.tag}`);
                         return;
                     }
-                    else if (rslt[0].picture === undefined || rslt[0].banner === undefined) {
+                    else if (rslt[0].picture == undefined || rslt[0].banner == undefined) {
                         msg.channel.send("Le profil demandé est incomplet");
+                        console.error(`Profil incomplet, demandé par ${msg.author.tag}`);
                         return;
                     }
 
 
                     msg.guild.members.filter((member) => {
-                        if (member.user.id === pseudo.replace(/\<|\>|@/g, "")) {
-                            usernamefound = `${member.user.username}#${member.user.discriminator}`;
+                        if (member.user.id === pseudo.replace(/\<|\>|@\!/g, "")) {
+                            usernamefound = `${member.user.tag}`;
                             pictureFound = member.user.avatarURL;
                         }
                     });
@@ -45,31 +40,15 @@ module.exports = (pseudo, msg, pool) => {
                     embed.addField("Langages:", rslt[0].langage);
                     embed.addField("Mon site web:", rslt[0].website);
                     embed.setImage(rslt[0].banner);
-                    embed.setFooter(`Requête demandée par ${msg.author.username} #${msg.author.discriminator}`, msg.author.avatarURL);
+                    embed.setFooter(`Requête demandée par ${msg.author.tag}`, msg.author.avatarURL);
 
                     msg.channel.send(embed);
 
 
                 }
                 else {
-                    console.error(err)
+                    throw err;
                 }
             });
-
-            connection.on('error', (err) => {
-                console.error(err);
-                return;
-            });
-        });
-
-
-
-
-
-
-    } catch (e) {
-        console.log(e);
-    }
-
 
 }

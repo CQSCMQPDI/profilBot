@@ -6,57 +6,53 @@ const bot_config = require("../../../config/bot_config.json");
 
 module.exports = (msg, pool) => {
 
-    try {
+    msg.author.send("Et bien, passe moi le lien de l'avatar que tu voudrais ajouter\n\n" + "`cancel` pour annuler")
+        .then(() => {
 
-        msg.author.send("Et bien, passe moi le lien de l'avatar que tu voudrais ajouter\n\n" +
-            "`cancel` pour annuler")
-            .then(() => {
-                msg.channel.awaitMessages(m => m.author.id === msg.author.id,
-                    {
-                        max: 1,
-                        time: bot_config.timeoutMessages,
-                        errors: ['time']
-                    })
-                    .then(res => {
-                        res = res.first();
+            msg.channel.awaitMessages(m => m.author.id === msg.author.id,
+                {
+                    max: 1,
+                    time: bot_config.timeoutMessages,
+                    errors: ['time']
+                })
+                .then(m => {
 
-                        if (res.content === "cancel") {
-                            misc.sendMessagesCode(msg, "stopAll");
-                            return;
-                        }
+                    let res = m.first().content;
 
+                    if (res === "cancel" | "c") {
+                        misc.sendMessagesCode(msg, "stopAll");
+                        return;
+                    }
+                    
+                    if (res.match(/^https\:\/\/[a-zA-Z0-9\.\/]+[\.jpg|\.png|\.jpeg|\.gif]$/g)){
 
-                        else if (res.content.match(/^https\:\/\//g)) {
-                            const str = res.content;
+                        pool.query("INSERT INTO profils(pseudo, picture) VALUES(?, ?);", [`<@!${msg.author.id}>`, res], (err) => {
+                            if (err) {
+                                updatePoolrequest("UPDATE profils SET picture= ? WHERE pseudo = ?", res, msg, pool);
+                            }
+                            else {
+                                return null;
+                            }
+                        });
+                    } 
+                    else{
 
-                            pool.query("INSERT INTO profils(pseudo, picture) VALUES(?, ?);", [`<@${msg.author.id}>`, str], (err, rows) => {
+                        misc.sendMessagesCode(msg, "urlCannoBeParsed");
+                        console.error(`Lien non conventionnel ${msg.author.tag}`);
+                        return;
 
-                                if (!err) {
-                                    updatePoolrequest("UPDATE profils SET picture= ? WHERE pseudo = ?", str);
-                                }
+                    }
+                }).then((err) => {
+                    if (err===null) misc.successSaved(msg);
+                    return err;
 
-                                else if (err) console.log(err);
+                }).catch(err => {
+                    misc.sendMessagesCode(msg, "errorMessage");
+                    throw err;
+                });
 
-                                else if (!err) {
-                                    misc.successSaved(msg);
-                                    return;
-                                }
+        }).catch(err => {
+            throw err;
+        });
 
-                            });
-
-
-                            return;
-                        }
-
-
-                        else {
-                            misc.sendMessagesCode(msg, "urlCannoBeParsed");
-                        }
-
-
-                    }).catch((_) => { });
-            })
-    } catch (e) {
-        console.log(e);
-    }
 };

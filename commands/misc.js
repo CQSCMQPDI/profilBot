@@ -7,7 +7,7 @@ module.exports = misc = {
   },
 
   sendMessagesCode: (msg, sentencesCode) => {
-    msg.author.send(JSON.parse(sentences)[sentencesCode]);
+    msg.author.send(sentences[sentencesCode]);
   }
 
 };

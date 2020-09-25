@@ -1,5 +1,4 @@
 const mysql = require('mysql2');
-const { RichEmbed } = require('discord.js');
 
 let showProfil = require('./profilCommands/showProfil.js');
 let setProfil = require('./profilCommands/setProfil.js');
@@ -18,9 +17,11 @@ var pool = mysql.createPool({
 
 
 module.exports = (argv, msg) => {
-
+  
+  
     let arg = argv.split(" ");
     if(arg[0] === "show" && arg[1] != undefined) showProfil(arg[1], msg, pool);
-    else if(arg[0] === "set") setProfil(msg, pool);
+    else if(arg[0].toString().toLowerCase() === "set" && arg[1] != undefined) setProfil(msg, pool);
     else msg.reply(sententes.errorMessage)
+
 };

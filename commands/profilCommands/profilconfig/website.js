@@ -6,62 +6,56 @@ const bot_config = require("../../../config/bot_config.json");
 
 module.exports = (msg, pool) => {
 
-    try {
+    msg.author.send("Et bien, passe moi le lien de ton site web que tu voudrais ajouter\n\n" + "`cancel` pour annuler")
+        .then(() => {
 
-        msg.author.send("Donne moi donc le lien de ton site web\n\n" +
-            "`cancel` pour annuler")
-            .then(() => {
-                msg.channel.awaitMessages(m => m.author.id === msg.author.id,
-                    {
-                        max: 1,
-                        time: bot_config.timeoutMessages,
-                        errors: ['time']
-                    })
-                    .then(res => {
-                        res = res.first();
+            msg.channel.awaitMessages(m => m.author.id === msg.author.id,
+                {
+                    max: 1,
+                    time: bot_config.timeoutMessages,
+                    errors: ['time']
+                })
+                .then(m => {
 
+                    let res = m.first().content;
 
-                        if (res.content === "cancel") {
-                            misc.sendMessagesCode(msg, "stopAll");
-                            return;
-                        }
+                    console.log(res);
 
+                    if (res === "cancel" | "c") {
+                        misc.sendMessagesCode(msg, "stopAll");
+                        return;
+                    }
 
-                        else if (res.content.match(/^https\:\/\//g)) {
-                            const str = res.content;
+                    if (res.match(/^https\:\/\/.*/g)) {
+                        
+                        pool.query("INSERT INTO profils(pseudo, website) VALUES(?, ?);", [`<@!${msg.author.id}>`, res], (err) => {
+                            if (err) {
+                                updatePoolrequest("UPDATE profils SET website= ? WHERE pseudo = ?", res, msg, pool);
+                            }
+                            else {
+                                return null;
+                            }
+                        });
+                      
+                    }
+                    else {
 
-                            pool.query("INSERT INTO profils(pseudo, website) VALUES(?, ?);", [`<@${msg.author.id}>`, str], (err) => {
+                        misc.sendMessagesCode(msg, "urlCannoBeParsed");
+                        console.error(`Lien non conventionnel ${msg.author.tag}`);
+                        return;
 
+                    }
+                }).then((err) => {
+                    if (err === null) misc.successSaved(msg);
+                    return err;
 
-                                if (!err) {
-                                    updatePoolrequest("UPDATE profils SET website= ? WHERE pseudo = ?", str);
-                                }
+                }).catch(err => {
+                    misc.sendMessagesCode(msg, "errorMessage");
+                    throw err;
+                });
 
-                                else if (err) console.log(err);
-
-                                else if (!err) {
-                                    misc.successSaved(msg);
-                                    return;
-                                }
-
-
-                            });
-
-                            return;
-                        }
-
-
-
-                        else {
-                            misc.sendMessagesCode(msg, "urlCannoBeParsed");
-                        }
-
-
-
-                    }).catch((_) => { });
-            })
-    } catch (e) {
-        console.log(e);
-    }
+        }).catch(err => {
+            throw err;
+        });
 
 };

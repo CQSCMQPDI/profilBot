@@ -1,4 +1,5 @@
 const bot_config = require('../../config/bot_config.json');
+const misc = require("../misc.js");
 
 const introduction = require("./profilconfig/introduction.js");
 const avatar = require("./profilconfig/avatar.js");
@@ -6,59 +7,62 @@ const banner = require("./profilconfig/banner.js");
 const languages = require("./profilconfig/languages.js");
 const website = require("./profilconfig/website.js");
 
-module.exports = (dmMsg, pool) => {
+module.exports = (msg, pool) => {
     
-    
-    try {
+    msg.author.send(`Bonjour, Cette configuration se fera en entretien, alors, dis moi, que veux-tu modifier ?\n\n
+\`Présentation\`\n
+\`Langages\`\n
+\`Bannière\`\n
+\`Avatar\`\n
+\`Site\`\n
+\n
+\`cancel\` pour annuler`).then(dmMsg => {
 
-        dmMsg.author.send(`Bonjour, Cette configuration se fera en entretien, alors, dis moi, que veux-tu modifier ?\n\n
-    \`Présentation\`\n
-    \`Langages\`\n
-    \`Bannière\`\n
-    \`Avatar\`\n
-    \`Site\`\n
-    \n
-    \`cancel\` pour annuler`).then(dmdmMsg => {
+        dmMsg.channel.awaitMessages(m => m.author.id === msg.author.id, {
+            max: 1,
+            time: bot_config.awaitMessages,
+            errors: ['time']
+        }).then(res => {
+            
+            res = res.first();
+            if(res == null) {
+                dmMsg.author.send("Erreur");
+                return;
+            }
 
+            switch (res.content.toLowerCase()) {
+                    case "présentation":
+                        introduction(res, pool);
+                        break;
+                    case "langage":
+                        languages(res, pool);
+                        break;
+                    case "avatar":
+                        avatar(res, pool);
+                        break;
+                    case "bannière":
+                        banner(res, pool);
+                        break;
+                    case "site":
+                        website(res, pool);
+                        break;
+                    case "cancel":
+                        misc.sendMessagesCode(res, "stopAll");
+                        break;
 
-                dmdmMsg.channel.awaitMessages(m => m.author.id === dmMsg.author.id, {
-                    max: 1,
-                    time: bot_config.awaitMessages,
-                    errors: ['time']
-                }).then(res => {
+                    default:
+                        res.author.send("Tu n'as pas envoyé le bon mot clef, je me casse, ciao.");
+                        break;
+            }
 
-                    res = res.first();
-                        
+            return;
+            
+        }).catch(err => {
+            throw err;
+        });
 
-                        switch (res.content.toLowerCase()) {
-                            case "pr":
-                                introduction(dmMsg, pool);
-                                return;
-                            case "lang":
-                                languages(dmMsg, pool);
-                                return;
-                            case "avatar":
-                                avatar(dmMsg, pool);
-                                return;
-                            case "banner":
-                                banner(dmMsg, pool);
-                                return;
-                            case "site":
-                                website(dmMsg, pool);
-                                return;
-                            case "cancel":
-                                dmMsg.author.send(sententes.stopAll);
-                                return;
-                            default:
-                                dmMsg.author.send("Tu n'as pas envoyé le bon mot clef, je me casse, ciao.");
-                                return;
-                        }
-
-                    });
-                });
-
-    }catch(err){
+    }).catch(err => {
         throw err;
-    }
+    });
 
 }
